@@ -1,0 +1,18 @@
+{
+  "_provider": "github",
+  "ref": "refs/heads/main",
+  "before": "9a1b0000000000000000000000000000000000aa",
+  "after": "3f2c0000000000000000000000000000000000bb",
+  "repository": {
+    "name": "svc1",
+    "full_name": "orgA/svc1",
+    "owner": { "name": "orgA", "login": "orgA" },
+    "clone_url": "https://github.com/orgA/svc1.git"
+  },
+  "pusher": { "name": "alice", "email": "alice@orgA.com" },
+  "head_commit": {
+    "id": "3f2c0000000000000000000000000000000000bb",
+    "message": "feat: add login",
+    "author": { "name": "Alice", "email": "alice@orgA.com" }
+  }
+}

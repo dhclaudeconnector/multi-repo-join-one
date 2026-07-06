@@ -1,0 +1,94 @@
+name: Repo Sync Hourly
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "0 * * * *"
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  repo-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 59
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare runtime env
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp .deploy/env.prod .deploy/env.runtime
+          {
+            echo "FIREBASE_SERVICE_ACCOUNT_B64=${{ secrets.FIREBASE_SERVICE_ACCOUNT_B64 }}"
+            echo "SYNC_GITHUB_TOKEN=${{ secrets.SYNC_GITHUB_TOKEN }}"
+            echo "SYNC_AZURE_TOKEN=${{ secrets.SYNC_AZURE_TOKEN }}"
+            echo "GH_ADMIN_TOKEN=${{ secrets.GH_ADMIN_TOKEN }}"
+          } >> "$GITHUB_ENV"
+
+      - name: Run repo sync for this hour
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          set -a
+          source .deploy/env.runtime
+          set +a
+          export FIREBASE_SERVICE_ACCOUNT="$FIREBASE_SERVICE_ACCOUNT_B64"
+          export TOKEN__GITHUB="$SYNC_GITHUB_TOKEN"
+          export TOKEN__AZURE="$SYNC_AZURE_TOKEN"
+          export WORK_DIR="$RUNNER_TEMP/repo-sync"
+          export LOG_FORMAT="json"
+          export LOG_LEVEL="info"
+
+          echo "repo-sync started at $(date -Is)" | tee artifacts/repo-sync.log
+          # GitHub Actions sẽ restart job theo cron mỗi 60 phút. Chạy service tối đa 55 phút.
+          timeout 55m node dist/cli.js start 2>&1 | tee -a artifacts/repo-sync.log || code=$?
+          code=${code:-0}
+          echo "repo-sync ended at $(date -Is) with code=$code" | tee -a artifacts/repo-sync.log
+          if [ "$code" = "124" ]; then
+            echo "timeout reached; next scheduled run will resume queue" | tee -a artifacts/repo-sync.log
+            exit 0
+          fi
+          exit "$code"
+
+      - name: Check output summary
+        if: always()
+        shell: bash
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          set -a
+          source .deploy/env.runtime
+          set +a
+          export TOKEN__GITHUB="${{ secrets.SYNC_GITHUB_TOKEN }}"
+          export TOKEN__AZURE="${{ secrets.SYNC_AZURE_TOKEN }}"
+          node scripts/check-output.js --env .deploy/env.runtime --artifact artifacts/repo-sync.log --out artifacts/check-report.json
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-sync-logs-${{ github.run_id }}
+          path: |
+            artifacts/repo-sync.log
+            artifacts/check-report.json
+          if-no-files-found: warn

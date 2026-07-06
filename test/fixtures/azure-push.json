@@ -1,0 +1,30 @@
+{
+  "_provider": "azure",
+  "eventType": "git.push",
+  "id": "delivery-az-001",
+  "resource": {
+    "refUpdates": [
+      {
+        "name": "refs/heads/main",
+        "oldObjectId": "9a1b0000000000000000000000000000000000aa",
+        "newObjectId": "3f2c0000000000000000000000000000000000bb"
+      }
+    ],
+    "repository": {
+      "name": "mirror",
+      "project": { "name": "contoso" },
+      "remoteUrl": "https://dev.azure.com/contoso/_git/mirror"
+    },
+    "pushedBy": {
+      "displayName": "Alice",
+      "uniqueName": "alice@contoso.com"
+    },
+    "commits": [
+      {
+        "commitId": "3f2c0000000000000000000000000000000000bb",
+        "comment": "feat: add login",
+        "author": { "name": "Alice", "email": "alice@contoso.com" }
+      }
+    ]
+  }
+}

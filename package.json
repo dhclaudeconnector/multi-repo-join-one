@@ -1,0 +1,60 @@
+{
+  "name": "multi-repo-join-one",
+  "version": "1.0.0",
+  "description": "Node.js service that listens to Firebase RTDB (no HTTP server, no webhook verify), consumes GitHub/Azure push events FIFO, shallow-clones by SHA and fans them out into one or many target repos with original commit metadata.",
+  "keywords": [
+    "github",
+    "azure-repos",
+    "monorepo",
+    "sync",
+    "mirror",
+    "firebase",
+    "rtdb",
+    "webhook",
+    "git"
+  ],
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "repo-sync": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "DEPLOY.md",
+    "README.md",
+    ".env.example"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node dist/cli.js start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "smoke": "node dist/cli.js smoke",
+    "prepublishOnly": "npm run build",
+    "setup:rtdb-emulator": "firebase setup:emulators:database",
+    "test:smoke:rtdb": "vitest run test/smoke/rtdb-emulator.test.ts --reporter=verbose",
+    "check:output": "node scripts/check-output.js --env .deploy/env.prod --artifact artifacts/repo-sync.log --out artifacts/check-report.json",
+    "bootstrap:api": "bash scripts/bootstrap-from-env.sh .deploy/env.prod"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "pino": "^9.5.0",
+    "pino-pretty": "^13.0.0",
+    "simple-git": "^3.27.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "firebase-tools": "^15.22.4",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  }
+}
