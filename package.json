@@ -1,6 +1,6 @@
 {
-  "name": "multi-repo-join-one",
-  "version": "1.0.0",
+  "name": "@o25.16.0812ii/multi-repo-join-one",
+  "version": "1.0.1",
   "description": "Node.js service that listens to Firebase RTDB (no HTTP server, no webhook verify), consumes GitHub/Azure push events FIFO, shallow-clones by SHA and fans them out into one or many target repos with original commit metadata.",
   "keywords": [
     "github",
@@ -18,7 +18,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "repo-sync": "dist/cli.js"
+    "repo-sync": "dist/cli.js",
+    "multi-repo-join-one": "dist/cli.js"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "dist",
