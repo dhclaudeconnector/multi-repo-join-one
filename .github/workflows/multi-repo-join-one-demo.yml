@@ -1,0 +1,21 @@
+name: multi-repo-join-one-demo
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+jobs:
+  multi-repo-join-one-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - run: |
+          npm i -g @o25.16.0812ii/multi-repo-join-one
+      - name: Publish to multi-registry
+        env:
+          DOTENVRTDB_URL_SYNC_DEMO: ${{ secrets.DOTENVRTDB_URL_SYNC_DEMO }}
+        run: |
+          dotenvrtdb --eUrl "$DOTENVRTDB_URL_SYNC_DEMO" -- multi-repo-join-one

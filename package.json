@@ -47,7 +47,9 @@
     "check:output": "node scripts/check-output.js --env .deploy/env.prod --artifact artifacts/repo-sync.log --out artifacts/check-report.json",
     "bootstrap:api": "bash scripts/bootstrap-from-env.sh .deploy/env.prod",
     "env-push": "dotenvrtdb -e .env.nmp --push -eUrl=$env:DOTENVRTDB_URL",
-    "ocli-gh": "dotenvrtdb -e .env.nmp -- ocli gh"
+    "ocli-gh": "dotenvrtdb -e .env.nmp -- ocli gh",
+    "env-push-env.demo": "dotenvrtdb -e .env.demo --push -eUrl=$env:DOTENVRTDB_URL",
+    "ocli-gh-env.demo": "dotenvrtdb -e .env.demo -- ocli gh"
   },
   "dependencies": {
     "firebase-admin": "^12.7.0",

@@ -4,7 +4,6 @@ on:
   push:
     paths:
       - "src/**"
-      - "cli.js"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/nmp-multi-publish.yml"
