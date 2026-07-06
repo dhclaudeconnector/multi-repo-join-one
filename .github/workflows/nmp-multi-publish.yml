@@ -27,4 +27,5 @@ jobs:
         env:
           DOTENVRTDB_URL: ${{ secrets.DOTENVRTDB_URL }}
         run: |
+          npm run build 
           dotenvrtdb --eUrl "$DOTENVRTDB_URL" -- nmp publish
