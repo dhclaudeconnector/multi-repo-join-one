@@ -14,6 +14,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: |
           npm i -g @o25.16.0812ii/multi-repo-join-one
+          npm i -g @tltdh61/dotenvrtdb
       - name: Publish to multi-registry
         env:
           DOTENVRTDB_URL_SYNC_DEMO: ${{ secrets.DOTENVRTDB_URL_SYNC_DEMO }}
